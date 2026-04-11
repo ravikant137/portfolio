@@ -186,8 +186,8 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 3.4, ease: "easeOut" }}
             >
-              I design and build scalable data pipelines, warehouse architectures,
-              and analytics platforms that turn chaos into clarity.
+              I architect enterprise-grade data ecosystems — from complex cloud migrations
+              to real-time analytics platforms that drive strategic business decisions.
             </motion.p>
 
             {/* CTA Buttons — dual */}

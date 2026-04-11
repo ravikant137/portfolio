@@ -130,7 +130,7 @@ export default function ContactSection() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white/90">Ravikant Patil</h3>
-                <span className="text-[10px] font-mono text-gray-500">Data Engineer @ NetApp</span>
+                <span className="text-[10px] font-mono text-gray-500">Data Engineer @ Lacento Technologies</span>
               </div>
             </div>
 

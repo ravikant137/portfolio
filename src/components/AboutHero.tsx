@@ -22,23 +22,30 @@ const INFO_BLOCKS = [
   {
     id: "intro",
     title: "Hi, I'm Ravikant Patil",
-    subtitle: "Data Engineer  •  4.3 Years Experience",
-    body: "I design and build scalable data systems that power business decisions.",
+    subtitle: "Data Engineer  •  4+ Years Experience",
+    body: "I architect enterprise-grade data ecosystems — from complex migrations to real-time analytics platforms that transform raw data into strategic business intelligence.",
     color: "#1e90ff",
   },
   {
-    id: "netapp",
-    title: "Data Engineer @ NetApp",
-    subtitle: "Building enterprise-scale data infrastructure",
-    body: "Leading data pipeline architecture across cloud platforms — transforming complex, fragmented data into reliable, governed analytics that drive strategic decisions.",
+    id: "lacento",
+    title: "Data Engineer @ Lacento Technologies",
+    subtitle: "Current  •  Designing next-gen data infrastructure",
+    body: "Architecting scalable ETL pipelines, cloud-native data platforms, and advanced analytics solutions — driving data governance and real-time intelligence across enterprise clients.",
     color: "#9333ea",
+  },
+  {
+    id: "sigmasoft",
+    title: "Previously @ Sigmasoft Infotech",
+    subtitle: "2022–2025  •  Bangalore, India",
+    body: "Spearheaded Pentaho-to-Snowflake and SAP HANA-to-Azure migrations. Built enterprise ETL workflows with Informatica Cloud & ADF, optimized SQL performance, and delivered large-scale sales data migrations with zero downtime.",
+    color: "#ff6b2b",
   },
   {
     id: "brand",
     title: "I don't just build pipelines.",
     subtitle: "I engineer systems that drive impact.",
-    body: "From raw data chaos to executive dashboards — every system I build is designed for scale, reliability, and measurable business outcomes.",
-    color: "#ff6b2b",
+    body: "From legacy migration to cloud-native analytics — every system I build is designed for scale, reliability, and measurable business outcomes.",
+    color: "#00e5a0",
   },
 ];
 
@@ -558,7 +565,7 @@ export default function AboutHero() {
         >
           <div className="text-center mb-10">
             <h3 className="text-3xl md:text-4xl font-bold gradient-text">
-              Measurable Impact at NetApp
+              Measurable Impact
             </h3>
           </div>
 
