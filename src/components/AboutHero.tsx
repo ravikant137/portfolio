@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
+import DashboardPreview from "./DashboardPreview";
 
 /* ═══════════════════════════════════════════════════════════════
    DATA
@@ -471,44 +472,83 @@ export default function AboutHero() {
         />
       </div>
 
-      <div className="relative max-w-6xl mx-auto">
-        {/* ── INTRO WITH 3D AVATAR ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-28">
-          {/* Avatar */}
+      <div className="relative max-w-7xl mx-auto">
+        {/* ── ROW 1: AVATAR (left) + TEXT (right) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-20">
+          {/* Avatar — left side, no frame */}
           <motion.div style={{ y: photoY }}>
             <Avatar3D inView={inView} />
           </motion.div>
 
-          {/* Text */}
-          <div>
-            {INFO_BLOCKS.map((block, idx) => (
-              <motion.div
-                key={block.id}
-                className={`relative pl-5 ${idx > 0 ? "mt-14" : ""}`}
-                initial={{ opacity: 0, x: 30 }}
-                animate={inView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.7, delay: 0.4 + idx * 0.25 }}
-              >
-                {/* Accent line left */}
+          {/* Text — right side with dark spotlight */}
+          <div className="relative">
+            {/* Dark spotlight behind text */}
+            <div
+              className="absolute -inset-8 pointer-events-none"
+              style={{
+                background: "radial-gradient(ellipse 80% 70% at 50% 50%, rgba(3,3,8,0.6) 0%, transparent 70%)",
+              }}
+            />
+            <div className="relative">
+              {INFO_BLOCKS.map((block, idx) => (
                 <motion.div
-                  className="absolute left-0 top-0 w-[2px] rounded-full"
-                  style={{ background: `linear-gradient(180deg, ${block.color}, transparent)` }}
-                  initial={{ height: 0 }}
-                  animate={inView ? { height: "100%" } : {}}
-                  transition={{ duration: 0.6, delay: 0.5 + idx * 0.25 }}
-                />
-                <h3
-                  className="text-2xl md:text-3xl font-bold mb-2"
-                  style={{ color: idx === 0 ? "#fff" : block.color }}
+                  key={block.id}
+                  className={`relative pl-5 ${idx > 0 ? "mt-14" : ""}`}
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={inView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.7, delay: 0.4 + idx * 0.25 }}
                 >
-                  {block.title}
-                </h3>
-                <p className="text-xs font-mono text-gray-500 mb-3">{block.subtitle}</p>
-                <p className="text-sm text-gray-400 leading-relaxed max-w-md">{block.body}</p>
-              </motion.div>
-            ))}
+                  {/* Accent line left */}
+                  <motion.div
+                    className="absolute left-0 top-0 w-[2px] rounded-full"
+                    style={{ background: `linear-gradient(180deg, ${block.color}, transparent)` }}
+                    initial={{ height: 0 }}
+                    animate={inView ? { height: "100%" } : {}}
+                    transition={{ duration: 0.6, delay: 0.5 + idx * 0.25 }}
+                  />
+                  <h3
+                    className="text-2xl md:text-3xl font-bold mb-2"
+                    style={{
+                      color: idx === 0 ? "#fff" : block.color,
+                      textShadow: idx === 0 ? "0 0 10px rgba(255,255,255,0.08)" : `0 0 12px ${block.color}20`,
+                    }}
+                  >
+                    {block.title}
+                  </h3>
+                  <p className="text-xs font-mono text-gray-500 mb-3">{block.subtitle}</p>
+                  <p className="text-sm text-gray-400 leading-relaxed max-w-md" style={{ lineHeight: 1.8 }}>
+                    {block.body}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
+
+        {/* ── ROW 2: DASHBOARD PREVIEW (full width, floating monitor) ── */}
+        <motion.div
+          className="mb-24 max-w-3xl mx-auto"
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        >
+          <div className="text-center mb-6">
+            <motion.span
+              className="inline-block text-[10px] font-mono tracking-[0.3em] uppercase px-4 py-1.5 rounded-full mb-4"
+              style={{
+                color: "#1e90ff",
+                background: "rgba(30,144,255,0.06)",
+                border: "1px solid rgba(30,144,255,0.15)",
+              }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.9 }}
+            >
+              Real Pipeline Metrics
+            </motion.span>
+          </div>
+          <DashboardPreview />
+        </motion.div>
 
         {/* ── ACHIEVEMENT METRICS ── */}
         <motion.div
