@@ -80,20 +80,34 @@ function useMouse(ref: React.RefObject<HTMLDivElement | null>) {
    FLOATING PARTICLES (behind avatar)
    ═══════════════════════════════════════════════════════════════ */
 
-const PARTICLES = Array.from({ length: 28 }, (_, i) => ({
-  id: i,
-  x: Math.random() * 100,
-  y: Math.random() * 100,
-  size: 2 + Math.random() * 4,
-  dur: 4 + Math.random() * 6,
-  delay: Math.random() * 4,
-  color: ["#1e90ff", "#9333ea", "#ff6b2b", "#00e5a0"][i % 4],
-}));
+const PARTICLE_COLORS = ["#1e90ff", "#9333ea", "#ff6b2b", "#00e5a0"];
 
 function BackgroundParticles() {
+  const [particles, setParticles] = useState<
+    { id: number; x: number; y: number; size: number; dur: number; delay: number; yDrift: number; xDrift: number; color: string }[]
+  >([]);
+
+  useEffect(() => {
+    setParticles(
+      Array.from({ length: 28 }, (_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: 2 + Math.random() * 4,
+        dur: 4 + Math.random() * 6,
+        delay: Math.random() * 4,
+        yDrift: -(20 + Math.random() * 30),
+        xDrift: (Math.random() - 0.5) * 20,
+        color: PARTICLE_COLORS[i % 4],
+      })),
+    );
+  }, []);
+
+  if (particles.length === 0) return null;
+
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {PARTICLES.map((p) => (
+      {particles.map((p) => (
         <motion.div
           key={p.id}
           className="absolute rounded-full"
@@ -107,8 +121,8 @@ function BackgroundParticles() {
             willChange: "transform, opacity",
           }}
           animate={{
-            y: [0, -20 - Math.random() * 30, 0],
-            x: [0, (Math.random() - 0.5) * 20, 0],
+            y: [0, p.yDrift, 0],
+            x: [0, p.xDrift, 0],
             opacity: [0, 0.7, 0],
           }}
           transition={{
@@ -386,16 +400,40 @@ function Avatar3D({ inView }: { inView: boolean }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   COUNTER
+   COUNTER — Animated count-up
    ═══════════════════════════════════════════════════════════════ */
 
-function Counter({ value, color }: { value: string; color: string }) {
+function Counter({ value, color, inView }: { value: string; color: string; inView: boolean }) {
+  const suffix = value.replace(/^[\d.]+/, "");
+  const numStr = value.match(/^([\d.]+)/)?.[1];
+  const target = numStr ? parseFloat(numStr) : 0;
+  const isFloat = value.includes(".");
+  const [display, setDisplay] = useState(numStr ? "0" + suffix : value);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    if (!inView || !numStr || hasAnimated.current) return;
+    hasAnimated.current = true;
+    const duration = 1800;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = eased * target;
+      setDisplay((isFloat ? current.toFixed(1) : Math.round(current).toString()) + suffix);
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [inView, target, suffix, isFloat, numStr]);
+
   return (
     <span
       className="text-2xl md:text-3xl font-bold font-mono tabular-nums"
       style={{ color, textShadow: `0 0 20px ${color}40` }}
     >
-      {value}
+      {display}
     </span>
   );
 }
@@ -446,11 +484,19 @@ export default function AboutHero() {
             {INFO_BLOCKS.map((block, idx) => (
               <motion.div
                 key={block.id}
-                className={idx > 0 ? "mt-14" : ""}
+                className={`relative pl-5 ${idx > 0 ? "mt-14" : ""}`}
                 initial={{ opacity: 0, x: 30 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.7, delay: 0.4 + idx * 0.25 }}
               >
+                {/* Accent line left */}
+                <motion.div
+                  className="absolute left-0 top-0 w-[2px] rounded-full"
+                  style={{ background: `linear-gradient(180deg, ${block.color}, transparent)` }}
+                  initial={{ height: 0 }}
+                  animate={inView ? { height: "100%" } : {}}
+                  transition={{ duration: 0.6, delay: 0.5 + idx * 0.25 }}
+                />
                 <h3
                   className="text-2xl md:text-3xl font-bold mb-2"
                   style={{ color: idx === 0 ? "#fff" : block.color }}
@@ -480,12 +526,35 @@ export default function AboutHero() {
             {ACHIEVEMENTS.map((a, i) => (
               <motion.div
                 key={a.label}
-                className="glass p-5 text-center relative group"
+                className="relative p-5 text-center group overflow-hidden"
+                style={{
+                  background: "var(--glass-bg)",
+                  backdropFilter: "blur(24px)",
+                  border: "1px solid var(--glass-border)",
+                  borderRadius: 16,
+                }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 1.2 + i * 0.1 }}
-                whileHover={{ scale: 1.03, borderColor: a.color + "40" }}
+                whileHover={{
+                  scale: 1.04,
+                  y: -4,
+                  borderColor: a.color + "40",
+                  boxShadow: `0 12px 40px ${a.color}15, 0 0 20px ${a.color}08`,
+                }}
               >
+                {/* Color accent bar top */}
+                <div
+                  className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: `linear-gradient(90deg, transparent, ${a.color}, transparent)` }}
+                />
+                {/* Hover glow */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(ellipse at center, ${a.color}06 0%, transparent 70%)`,
+                  }}
+                />
                 <motion.div
                   className="absolute top-3 right-3 w-2 h-2 rounded-full"
                   style={{ background: a.color }}
@@ -493,7 +562,7 @@ export default function AboutHero() {
                   transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
                 />
                 <span className="text-2xl mb-2 block">{a.icon}</span>
-                <Counter value={a.metric} color={a.color} />
+                <Counter value={a.metric} color={a.color} inView={inView} />
                 <p className="text-[11px] text-gray-500 mt-2 font-mono">{a.label}</p>
               </motion.div>
             ))}
@@ -507,31 +576,61 @@ export default function AboutHero() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 1.6 }}
         >
-          <div
-            className="h-px w-20 mx-auto mb-8"
-            style={{
-              background: "linear-gradient(90deg, transparent, #1e90ff40, transparent)",
-            }}
-          />
+          {/* Premium gradient divider */}
+          <div className="relative h-px w-40 mx-auto mb-10">
+            <div
+              className="absolute inset-0"
+              style={{
+                background: "linear-gradient(90deg, transparent, #1e90ff50, #9333ea50, transparent)",
+              }}
+            />
+            <motion.div
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full"
+              style={{
+                background: "#1e90ff",
+                boxShadow: "0 0 12px #1e90ff60",
+              }}
+              animate={{ scale: [1, 1.5, 1], opacity: [0.6, 1, 0.6] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+          </div>
           <h3 className="text-3xl md:text-5xl font-bold gradient-text-hero mb-3">
             Ravikant Patil
           </h3>
-          <p className="text-sm font-mono text-gray-500">
+          <p className="text-sm font-mono text-gray-500 mb-2">
             Data Engineer  •  Data Architecture  •  AI-Driven Systems
+          </p>
+          <p className="text-xs text-gray-600 max-w-sm mx-auto mb-8">
+            Building the infrastructure that powers tomorrow&apos;s data-driven decisions.
           </p>
           <motion.a
             href="#pipeline"
-            className="inline-block mt-8 px-8 py-3.5 rounded-xl font-mono text-sm transition-all"
+            className="group relative inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-mono text-sm overflow-hidden transition-all"
             style={{
               background:
                 "linear-gradient(135deg, rgba(30,144,255,0.12), rgba(147,51,234,0.12))",
               border: "1px solid rgba(30,144,255,0.25)",
               color: "#1e90ff",
             }}
-            whileHover={{ scale: 1.04, boxShadow: "0 0 30px rgba(30,144,255,0.2)" }}
+            whileHover={{
+              scale: 1.04,
+              boxShadow: "0 0 30px rgba(30,144,255,0.2), 0 0 60px rgba(147,51,234,0.08)",
+              borderColor: "rgba(30,144,255,0.45)",
+            }}
             whileTap={{ scale: 0.96 }}
           >
-            Explore My Work →
+            <span
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{
+                background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.04) 50%, transparent 60%)",
+                backgroundSize: "200% 100%",
+                animation: "shimmer 2s linear infinite",
+              }}
+            />
+            <span className="relative">Explore My Work</span>
+            <svg className="relative w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
           </motion.a>
         </motion.div>
       </div>

@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, useState, useCallback } from "react";
 import { Canvas, useFrame, ThreeEvent } from "@react-three/fiber";
-import { Float, Environment, Html, MeshReflectorMaterial } from "@react-three/drei";
+import { Float, Environment, Html, MeshReflectorMaterial, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
 /* ─── Types ─── */
@@ -226,10 +226,10 @@ function PipelineNodeMesh({
           <meshStandardMaterial
             color={node.color}
             emissive={node.color}
-            emissiveIntensity={hovered || isSelected ? 1.5 : 0.5}
-            metalness={0.85}
-            roughness={0.15}
-            wireframe={!isSelected && !hovered}
+            emissiveIntensity={hovered || isSelected ? 2.5 : 1.2}
+            metalness={0.7}
+            roughness={0.2}
+            wireframe={false}
           />
         </mesh>
 
@@ -312,12 +312,13 @@ function PipelineSceneContent({
 }) {
   return (
     <>
-      <ambientLight intensity={0.06} />
-      <pointLight position={[-6, 3, 4]} color="#ff6b2b" intensity={1.5} distance={20} />
-      <pointLight position={[0, 4, 4]} color="#1e90ff" intensity={2} distance={20} />
-      <pointLight position={[3, 3, 4]} color="#9333ea" intensity={1.5} distance={20} />
-      <pointLight position={[6, 3, 4]} color="#00e5a0" intensity={1.5} distance={20} />
-      <fog attach="fog" args={["#030308", 10, 30]} />
+      <ambientLight intensity={0.25} />
+      <pointLight position={[-6, 3, 4]} color="#ff6b2b" intensity={2.5} distance={25} />
+      <pointLight position={[0, 4, 4]} color="#1e90ff" intensity={3} distance={25} />
+      <pointLight position={[3, 3, 4]} color="#9333ea" intensity={2.5} distance={25} />
+      <pointLight position={[6, 3, 4]} color="#00e5a0" intensity={2.5} distance={25} />
+      <pointLight position={[0, -2, 6]} color="#1e90ff" intensity={1} distance={20} />
+      <fog attach="fog" args={["#030308", 16, 35]} />
 
       <PipelineFloor />
 
@@ -368,6 +369,14 @@ export default function PipelineScene({
         onPointerMissed={() => onSelectNode(null)}
       >
         <PipelineSceneContent selectedNode={selectedNode} onSelectNode={onSelectNode} />
+        <OrbitControls
+          enableZoom={false}
+          enablePan={false}
+          maxPolarAngle={Math.PI / 2}
+          minPolarAngle={Math.PI / 4}
+          autoRotate
+          autoRotateSpeed={0.3}
+        />
       </Canvas>
     </div>
   );

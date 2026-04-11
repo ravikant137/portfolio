@@ -142,6 +142,46 @@ body {
   animation: subtlePulse 4s ease-in-out infinite;
 }
 
+/* ─── Section divider glow ─── */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #1e90ff25 20%, #9333ea25 50%, #ff6b2b25 80%, transparent 100%);
+  margin: 0 auto;
+}
+
+/* ─── Selection highlight ─── */
+::selection {
+  background: rgba(30,144,255,0.25);
+  color: #fff;
+}
+::-moz-selection {
+  background: rgba(30,144,255,0.25);
+  color: #fff;
+}
+
+/* ─── Focus ring ─── */
+:focus-visible {
+  outline: 2px solid rgba(30,144,255,0.5);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Smooth link underlines ─── */
+a {
+  text-decoration-skip-ink: auto;
+}
+
+/* ─── Premium glass hover ─── */
+.glass-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-hover:hover {
+  background: rgba(10, 10, 35, 0.75);
+  border-color: rgba(30,144,255,0.15);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 20px rgba(30,144,255,0.04);
+  transform: translateY(-2px);
+}
+
 /* ─── Infinite grid floor (CSS) ─── */
 .grid-floor {
   background-image:

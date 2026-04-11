@@ -77,7 +77,16 @@ export default function DetailPanel({ node, onClose }: DetailPanelProps) {
             exit={{ x: "100%", opacity: 0 }}
             transition={{ type: "spring", damping: 28, stiffness: 220 }}
           >
-            <div className="h-full p-5 flex flex-col glass-strong m-3">
+            <div
+              className="h-full p-5 flex flex-col m-3 rounded-2xl"
+              style={{
+                background: "rgba(8,8,18,0.92)",
+                backdropFilter: "blur(24px)",
+                WebkitBackdropFilter: "blur(24px)",
+                border: "1px solid rgba(255,255,255,0.06)",
+                boxShadow: "0 0 60px rgba(0,0,0,0.6), -4px 0 30px rgba(30,144,255,0.04)",
+              }}
+            >
               {/* ── Header ── */}
               <div className="flex items-start justify-between mb-5">
                 <div className="flex items-center gap-3">
