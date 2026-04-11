@@ -32,8 +32,9 @@ function GridLines() {
   const ref = useRef<THREE.Group>(null);
   const lines = useMemo(() => {
     const arr: { from: [number, number, number]; to: [number, number, number] }[] = [];
-    const size = 40;
-    const step = 2;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const size = isMobile ? 20 : 40;
+    const step = isMobile ? 4 : 2;
     for (let i = -size; i <= size; i += step) {
       arr.push({ from: [i, -2.49, -size], to: [i, -2.49, size] });
       arr.push({ from: [-size, -2.49, i], to: [size, -2.49, i] });
@@ -56,7 +57,8 @@ function GridLines() {
 
 /* ─── Ambient Particles ─── */
 function AmbientParticles() {
-  const count = 600;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const count = isMobile ? 150 : 600;
   const ref = useRef<THREE.Points>(null);
 
   const [positions, colors] = useMemo(() => {
@@ -109,9 +111,11 @@ function DataStream({
   delay?: number;
 }) {
   const ref = useRef<THREE.Group>(null);
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const actualCount = isMobile ? Math.min(count, 6) : count;
   const particles = useMemo(
-    () => Array.from({ length: count }, (_, i) => ({ offset: (i / count + delay) % 1, size: Math.random() * 0.04 + 0.02 })),
-    [count, delay]
+    () => Array.from({ length: actualCount }, (_, i) => ({ offset: (i / actualCount + delay) % 1, size: Math.random() * 0.04 + 0.02 })),
+    [actualCount, delay]
   );
 
   useFrame(({ clock }) => {
@@ -282,14 +286,16 @@ function HeroSceneContent() {
 }
 
 export default function HeroScene() {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   return (
     <div className="w-full h-full canvas-container">
       <Canvas
         camera={{ position: [0, 0.5, 7], fov: 58 }}
-        dpr={[1, 1.5]}
-        shadows
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+        dpr={isMobile ? [1, 1] : [1, 1.5]}
+        shadows={!isMobile}
+        gl={{ antialias: !isMobile, alpha: true, powerPreference: "high-performance" }}
         style={{ background: "transparent" }}
+        frameloop={isMobile ? "demand" : "always"}
       >
         <HeroSceneContent />
       </Canvas>

@@ -71,13 +71,11 @@ export default function ContactSection() {
             in  LinkedIn
           </a>
           <a
-            href="https://github.com/ravikant137"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="glass px-8 py-3.5 font-mono text-sm transition-all hover:bg-[#ffffff08]"
-            style={{ borderColor: "#ffffff15", color: "#888" }}
+            href="tel:+917058371347"
+            className="glass px-8 py-3.5 font-mono text-sm transition-all hover:bg-[#00e5a010]"
+            style={{ borderColor: "#00e5a030", color: "#00e5a0" }}
           >
-            ⌘ GitHub
+            ✆ +91 7058371347
           </a>
         </motion.div>
 

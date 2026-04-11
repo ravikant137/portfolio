@@ -96,8 +96,9 @@ function BackgroundParticles() {
   >([]);
 
   useEffect(() => {
+    const isMobile = window.innerWidth < 768;
     setParticles(
-      Array.from({ length: 28 }, (_, i) => ({
+      Array.from({ length: isMobile ? 10 : 28 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,

@@ -358,13 +358,14 @@ export default function PipelineScene({
   selectedNode: string | null;
   onSelectNode: (id: string | null) => void;
 }) {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   return (
     <div className="w-full h-full canvas-container">
       <Canvas
         camera={{ position: [0, 2, 10], fov: 50 }}
-        dpr={[1, 1.5]}
-        shadows
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+        dpr={isMobile ? [1, 1] : [1, 1.5]}
+        shadows={!isMobile}
+        gl={{ antialias: !isMobile, alpha: true, powerPreference: "high-performance" }}
         style={{ background: "transparent" }}
         onPointerMissed={() => onSelectNode(null)}
       >
