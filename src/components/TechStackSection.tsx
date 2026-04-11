@@ -27,8 +27,8 @@ const TECH_STACK: TechItem[] = [
   { name: "dbt", icon: "🔧", color: "#ff694b", proficiency: 94, category: "Transformation", useCase: "Modular SQL models, data testing, documentation, CI/CD for data transformations.", orbitRadius: 3.2, orbitSpeed: -0.2, orbitOffset: Math.PI * 0.5 },
   { name: "Azure", icon: "☁️", color: "#0078d4", proficiency: 89, category: "Cloud Platform", useCase: "ADF, Synapse, Blob Storage, Event Hub — full cloud data platform deployment.", orbitRadius: 3.2, orbitSpeed: -0.2, orbitOffset: Math.PI },
   { name: "AWS", icon: "🔶", color: "#ff9900", proficiency: 86, category: "Cloud Platform", useCase: "S3, Redshift, Glue, Lambda, Step Functions — serverless ETL & data lake.", orbitRadius: 3.2, orbitSpeed: -0.2, orbitOffset: Math.PI * 1.5 },
-  { name: "Kafka", icon: "📨", color: "#231f20", proficiency: 85, category: "Streaming", useCase: "Real-time event streaming, topic partitioning, consumer group management.", orbitRadius: 3.9, orbitSpeed: 0.15, orbitOffset: Math.PI * 0.25 },
-  { name: "Spark", icon: "⚡", color: "#e25a1c", proficiency: 87, category: "Processing", useCase: "Distributed data processing, PySpark transformations, streaming analytics.", orbitRadius: 3.9, orbitSpeed: 0.15, orbitOffset: Math.PI * 1.25 },
+  { name: "Spark", icon: "⚡", color: "#e25a1c", proficiency: 87, category: "Processing", useCase: "Distributed data processing, PySpark transformations, streaming analytics.", orbitRadius: 3.9, orbitSpeed: 0.15, orbitOffset: Math.PI * 0.25 },
+  { name: "Power BI", icon: "📊", color: "#f2c811", proficiency: 90, category: "Visualization", useCase: "Interactive dashboards, DAX measures, real-time reporting, executive KPI tracking.", orbitRadius: 3.9, orbitSpeed: 0.15, orbitOffset: Math.PI * 1.25 },
 ];
 
 /* ─── 3D Orbiting Icon ─── */

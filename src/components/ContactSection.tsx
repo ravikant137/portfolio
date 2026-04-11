@@ -96,8 +96,37 @@ export default function ContactSection() {
 
           <div className="relative space-y-3 text-left">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full overflow-hidden relative" style={{ border: "2px solid #1e90ff30" }}>
-                <Image src="/ravikant.jpg" alt="Ravikant Patil" width={48} height={48} className="w-full h-full object-cover" />
+              {/* 3D-style avatar — transparent bg, floating, neon rim */}
+              <div
+                className="relative w-14 h-14 shrink-0"
+                style={{ perspective: 600 }}
+              >
+                {/* Neon glow behind */}
+                <div
+                  className="absolute inset-[-4px] rounded-full pointer-events-none"
+                  style={{
+                    background: "radial-gradient(circle, rgba(30,144,255,0.15) 0%, transparent 70%)",
+                    filter: "blur(6px)",
+                  }}
+                />
+                {/* Floating avatar with transparent bg */}
+                <motion.div
+                  className="relative w-14 h-14 overflow-hidden rounded-full"
+                  style={{
+                    border: "2px solid rgba(30,144,255,0.3)",
+                    boxShadow: "0 0 16px rgba(30,144,255,0.1), 0 4px 12px rgba(0,0,0,0.4)",
+                  }}
+                  animate={{ y: [0, -2, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Image
+                    src="/ravikant-nobg.webp"
+                    alt="Ravikant Patil"
+                    width={56}
+                    height={56}
+                    className="w-full h-full object-cover object-top scale-[1.4]"
+                  />
+                </motion.div>
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white/90">Ravikant Patil</h3>
