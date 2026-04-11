@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface StoryStage {
@@ -42,34 +42,9 @@ const STAGES: StoryStage[] = [
 ];
 
 export default function StoryMode() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [activeStage, setActiveStage] = useState(-1);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [activeStage, setActiveStage] = useState(0);
 
-  const stop = useCallback(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = null;
-    setIsPlaying(false);
-  }, []);
-
-  const play = useCallback(() => {
-    stop();
-    setIsPlaying(true);
-    setActiveStage(0);
-    let idx = 0;
-    intervalRef.current = setInterval(() => {
-      idx++;
-      if (idx >= STAGES.length) {
-        stop();
-        return;
-      }
-      setActiveStage(idx);
-    }, 5500);
-  }, [stop]);
-
-  useEffect(() => () => { if (intervalRef.current) clearInterval(intervalRef.current); }, []);
-
-  const stage = STAGES[activeStage] ?? null;
+  const stage = STAGES[activeStage] ?? STAGES[0];
 
   return (
     <section id="story" className="relative min-h-screen py-28 px-6 overflow-hidden">
@@ -100,33 +75,21 @@ export default function StoryMode() {
           viewport={{ once: true }}
         >
           <h2 className="text-4xl md:text-6xl font-bold mb-4 gradient-text">Data Journey</h2>
-          <p className="text-gray-500 max-w-xl mx-auto text-sm mb-8">
-            Watch how raw chaos becomes actionable intelligence through a modern data stack.
+          <p className="text-gray-500 max-w-xl mx-auto text-sm">
+            Hover over each stage to explore how raw chaos becomes actionable intelligence.
           </p>
-
-          <motion.button
-            className="glass px-8 py-3 font-mono text-sm transition-all"
-            style={{
-              borderColor: isPlaying ? "#ff6b2b" : "#1e90ff",
-              color: isPlaying ? "#ff6b2b" : "#1e90ff",
-            }}
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            onClick={isPlaying ? stop : play}
-          >
-            {isPlaying ? "⏹ Stop Journey" : "▶ Watch My Data Journey"}
-          </motion.button>
         </motion.div>
 
-        {/* Progress Rail */}
+        {/* Stage Cards — hover to reveal */}
         <div className="relative mb-12">
+          {/* Progress Rail */}
           <div className="absolute top-[14px] left-0 right-0 h-[2px] bg-white/5" />
           <motion.div
-            className="absolute top-[14px] left-0 h-[2px] transition-all duration-700"
+            className="absolute top-[14px] left-0 h-[2px] transition-all duration-500"
             style={{
-              width: activeStage >= 0 ? `${(activeStage / (STAGES.length - 1)) * 100}%` : "0%",
-              background: stage ? `linear-gradient(90deg, #ff6b2b, ${stage.color})` : "#1e90ff",
-              boxShadow: stage ? `0 0 12px ${stage.color}50` : "none",
+              width: `${(activeStage / (STAGES.length - 1)) * 100}%`,
+              background: `linear-gradient(90deg, #ff6b2b, ${stage.color})`,
+              boxShadow: `0 0 12px ${stage.color}50`,
             }}
           />
           <div className="relative flex justify-between">
@@ -134,10 +97,11 @@ export default function StoryMode() {
               const isActive = i === activeStage;
               const isPast = i < activeStage;
               return (
-                <button
+                <div
                   key={s.id}
-                  className="flex flex-col items-center gap-2 z-10"
-                  onClick={() => { stop(); setActiveStage(i); }}
+                  className="flex flex-col items-center gap-2 z-10 cursor-pointer"
+                  onMouseEnter={() => setActiveStage(i)}
+                  onTouchStart={() => setActiveStage(i)}
                 >
                   <motion.div
                     className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-mono border transition-all"
@@ -153,7 +117,7 @@ export default function StoryMode() {
                     {isPast ? "✓" : i + 1}
                   </motion.div>
                   <span className="text-[8px] font-mono text-gray-600 hidden md:block">{s.label.split("—")[1]?.trim()}</span>
-                </button>
+                </div>
               );
             })}
           </div>
@@ -161,53 +125,29 @@ export default function StoryMode() {
 
         {/* Stage Content */}
         <AnimatePresence mode="wait">
-          {stage ? (
-            <motion.div
-              key={stage.id}
-              className="glass-strong p-8 md:p-10"
-              initial={{ opacity: 0, y: 24, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.97 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl">{stage.icon}</span>
-                <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: stage.color }}>{stage.label}</span>
-                  <h3 className="text-2xl md:text-3xl font-bold" style={{ color: stage.color }}>{stage.headline}</h3>
-                </div>
+          <motion.div
+            key={stage.id}
+            className="glass-strong p-8 md:p-10"
+            initial={{ opacity: 0, y: 24, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.97 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-3xl">{stage.icon}</span>
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: stage.color }}>{stage.label}</span>
+                <h3 className="text-2xl md:text-3xl font-bold" style={{ color: stage.color }}>{stage.headline}</h3>
               </div>
+            </div>
 
-              <p className="text-gray-300 leading-relaxed mb-6 text-sm md:text-base">{stage.narrative}</p>
+            <p className="text-gray-300 leading-relaxed mb-6 text-sm md:text-base">{stage.narrative}</p>
 
-              <div className="glass-panel p-4">
-                <span className="text-[9px] font-mono text-gray-600 uppercase tracking-wider block mb-1">Technical Detail</span>
-                <p className="text-gray-400 text-xs leading-relaxed">{stage.detail}</p>
-              </div>
-
-              {/* stage transition indicator */}
-              {isPlaying && activeStage < STAGES.length - 1 && (
-                <div className="mt-5 flex items-center gap-2 text-[10px] font-mono text-gray-600">
-                  <motion.div
-                    className="w-3 h-3 rounded-full"
-                    style={{ background: stage.color }}
-                    animate={{ opacity: [0.3, 1, 0.3] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  />
-                  Auto-advancing in 5s…
-                </div>
-              )}
-            </motion.div>
-          ) : (
-            <motion.div
-              className="glass-panel p-12 text-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <p className="text-gray-600 text-sm">Press &quot;Watch My Data Journey&quot; or click a stage above.</p>
-            </motion.div>
-          )}
+            <div className="glass-panel p-4">
+              <span className="text-[9px] font-mono text-gray-600 uppercase tracking-wider block mb-1">Technical Detail</span>
+              <p className="text-gray-400 text-xs leading-relaxed">{stage.detail}</p>
+            </div>
+          </motion.div>
         </AnimatePresence>
       </div>
     </section>
