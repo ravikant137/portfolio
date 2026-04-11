@@ -118,7 +118,7 @@ export default function ContactSection() {
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <Image
-                    src="/ravikant-nobg.webp"
+                    src="/bg.png"
                     alt="Ravikant Patil"
                     width={56}
                     height={56}

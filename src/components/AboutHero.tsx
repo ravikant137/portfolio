@@ -284,7 +284,7 @@ function Avatar3D({ inView }: { inView: boolean }) {
           style={{ willChange: "transform" }}
         >
           <Image
-            src="/ravikant-nobg.webp"
+            src="/bg.png"
             alt="Ravikant Patil"
             width={340}
             height={450}
