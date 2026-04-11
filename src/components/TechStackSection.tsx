@@ -19,16 +19,25 @@ interface TechItem {
 }
 
 const TECH_STACK: TechItem[] = [
-  { name: "Snowflake", icon: "❄️", color: "#29b5e8", proficiency: 95, category: "Cloud DW", useCase: "Multi-layer warehouse design, query optimization, cost management with auto-scaling clusters.", orbitRadius: 2.4, orbitSpeed: 0.3, orbitOffset: 0 },
-  { name: "Databricks", icon: "🔥", color: "#ff3621", proficiency: 88, category: "Lakehouse", useCase: "Unified analytics on Delta Lake, PySpark notebooks, ML feature engineering.", orbitRadius: 2.4, orbitSpeed: 0.3, orbitOffset: Math.PI * 0.5 },
-  { name: "Python", icon: "🐍", color: "#ffd43b", proficiency: 93, category: "Core Language", useCase: "ETL scripting, data validation, API integration, ML pipelines with Pandas & PySpark.", orbitRadius: 2.4, orbitSpeed: 0.3, orbitOffset: Math.PI },
-  { name: "SQL", icon: "📋", color: "#1e90ff", proficiency: 98, category: "Query Engine", useCase: "Complex analytics, window functions, CTEs, stored procedures, performance tuning.", orbitRadius: 2.4, orbitSpeed: 0.3, orbitOffset: Math.PI * 1.5 },
-  { name: "Apache Airflow", icon: "🌊", color: "#017cee", proficiency: 91, category: "Orchestration", useCase: "DAG-based pipeline scheduling, monitoring, alerting, and complex dependency management.", orbitRadius: 3.2, orbitSpeed: -0.2, orbitOffset: 0 },
-  { name: "dbt", icon: "🔧", color: "#ff694b", proficiency: 94, category: "Transformation", useCase: "Modular SQL models, data testing, documentation, CI/CD for data transformations.", orbitRadius: 3.2, orbitSpeed: -0.2, orbitOffset: Math.PI * 0.5 },
-  { name: "Azure", icon: "☁️", color: "#0078d4", proficiency: 89, category: "Cloud Platform", useCase: "ADF, Synapse, Blob Storage, Event Hub — full cloud data platform deployment.", orbitRadius: 3.2, orbitSpeed: -0.2, orbitOffset: Math.PI },
-  { name: "AWS", icon: "🔶", color: "#ff9900", proficiency: 86, category: "Cloud Platform", useCase: "S3, Redshift, Glue, Lambda, Step Functions — serverless ETL & data lake.", orbitRadius: 3.2, orbitSpeed: -0.2, orbitOffset: Math.PI * 1.5 },
-  { name: "Spark", icon: "⚡", color: "#e25a1c", proficiency: 87, category: "Processing", useCase: "Distributed data processing, PySpark transformations, streaming analytics.", orbitRadius: 3.9, orbitSpeed: 0.15, orbitOffset: Math.PI * 0.25 },
-  { name: "Power BI", icon: "📊", color: "#f2c811", proficiency: 90, category: "Visualization", useCase: "Interactive dashboards, DAX measures, real-time reporting, executive KPI tracking.", orbitRadius: 3.9, orbitSpeed: 0.15, orbitOffset: Math.PI * 1.25 },
+  // Data Platforms
+  { name: "Snowflake", icon: "❄️", color: "#29b5e8", proficiency: 95, category: "Data Platform", useCase: "Multi-layer warehouse design, query optimization, cost management with auto-scaling clusters.", orbitRadius: 2.4, orbitSpeed: 0.3, orbitOffset: 0 },
+  { name: "Azure Blob Storage", icon: "☁️", color: "#0078d4", proficiency: 89, category: "Data Platform", useCase: "Blob storage for scalable, secure data lakes and staging zones.", orbitRadius: 2.4, orbitSpeed: 0.3, orbitOffset: Math.PI * 0.5 },
+  { name: "AWS S3", icon: "🔶", color: "#ff9900", proficiency: 86, category: "Data Platform", useCase: "S3 for cost-effective, highly available data lake storage and ingestion.", orbitRadius: 2.4, orbitSpeed: 0.3, orbitOffset: Math.PI },
+
+  // ETL / Integration
+  { name: "Informatica IICS", icon: "🟦", color: "#1e90ff", proficiency: 97, category: "ETL / Integration (Core)", useCase: "Cloud-native ETL, real-time and batch integration, Snowflake/Azure/AWS connectors. Core skill for enterprise data migration.", orbitRadius: 3.2, orbitSpeed: -0.2, orbitOffset: 0 },
+  { name: "Azure Data Factory", icon: "☁️", color: "#0078d4", proficiency: 90, category: "ETL / Integration", useCase: "Orchestrate and automate data pipelines across hybrid sources.", orbitRadius: 3.2, orbitSpeed: -0.2, orbitOffset: Math.PI * 0.5 },
+
+  // Languages
+  { name: "SQL", icon: "📋", color: "#1e90ff", proficiency: 98, category: "Language", useCase: "Complex analytics, window functions, CTEs, stored procedures, performance tuning.", orbitRadius: 3.2, orbitSpeed: -0.2, orbitOffset: Math.PI },
+  { name: "Python", icon: "🐍", color: "#ffd43b", proficiency: 93, category: "Language", useCase: "ETL scripting, data validation, API integration, ML pipelines.", orbitRadius: 3.2, orbitSpeed: -0.2, orbitOffset: Math.PI * 1.5 },
+
+  // Cloud
+  { name: "Azure", icon: "☁️", color: "#0078d4", proficiency: 89, category: "Cloud", useCase: "ADF, Synapse, Blob Storage, Event Hub — full cloud data platform deployment.", orbitRadius: 3.9, orbitSpeed: 0.15, orbitOffset: Math.PI * 0.25 },
+  { name: "AWS", icon: "🔶", color: "#ff9900", proficiency: 86, category: "Cloud", useCase: "S3, Redshift, Glue, Lambda, Step Functions — serverless ETL & data lake.", orbitRadius: 3.9, orbitSpeed: 0.15, orbitOffset: Math.PI * 1.25 },
+
+  // Visualization (optional, not highlighted)
+  { name: "Power BI", icon: "📊", color: "#f2c811", proficiency: 90, category: "Visualization", useCase: "Interactive dashboards, DAX measures, real-time reporting, executive KPI tracking.", orbitRadius: 3.9, orbitSpeed: 0.15, orbitOffset: Math.PI * 1.5 },
 ];
 
 /* ─── 3D Orbiting Icon ─── */

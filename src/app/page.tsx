@@ -10,6 +10,7 @@ import { PIPELINE_NODES } from "@/components/PipelineScene";
 import DashboardSection from "@/components/DashboardSection";
 import TechStackSection from "@/components/TechStackSection";
 import ContactSection from "@/components/ContactSection";
+import CertificationsSection from "@/components/CertificationsSection";
 import StoryMode from "@/components/StoryMode";
 import AboutHero from "@/components/AboutHero";
 
@@ -136,7 +137,7 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 2.5, ease: "easeOut" }}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#00e5a0] animate-pulse" />
-              DATA ENGINEER • PIPELINE ARCHITECT • CLOUD SPECIALIST
+              DATA ENGINEER
             </motion.div>
 
             {/* PRIMARY — Name with typewriter underline */}
@@ -186,8 +187,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 3.4, ease: "easeOut" }}
             >
-              I architect enterprise-grade data ecosystems — from complex cloud migrations
-              to real-time analytics platforms that drive strategic business decisions.
+              I help organizations migrate to Snowflake, automate ETL with Informatica IICS, and deliver analytics pipelines that cut costs, boost performance, and enable data-driven decisions. Ready to transform your data ecosystem?
             </motion.p>
 
             {/* CTA Buttons — dual */}
@@ -223,7 +223,7 @@ export default function Home() {
                     animation: "shimmer 2s linear infinite",
                   }}
                 />
-                <span className="relative">Explore My Work</span>
+                <span className="relative">See Case Studies</span>
                 <svg className="relative w-5 h-5 transition-transform group-hover:translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
@@ -246,7 +246,7 @@ export default function Home() {
                 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Get in Touch
+                Contact Me
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
@@ -445,6 +445,9 @@ export default function Home() {
 
         {/* ========== TECH STACK ========== */}
         <TechStackSection />
+
+        {/* ========== CERTIFICATIONS ========== */}
+        <CertificationsSection />
 
         {/* ========== CONTACT ========== */}
         <ContactSection />
