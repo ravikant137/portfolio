@@ -1,57 +1,62 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function LoadingScreen() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 2200);
+    const timer = setTimeout(() => setVisible(false), 1200);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <AnimatePresence>
-      {isLoading && (
+      {visible && (
         <motion.div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#050510]"
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#030308]"
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4 }}
         >
-          {/* Animated logo */}
+          {/* Pulsing core */}
           <motion.div
-            className="mb-8"
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ duration: 0.8, type: "spring" }}
+            className="relative w-14 h-14 mb-8"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
           >
-            <div className="w-20 h-20 rounded-2xl flex items-center justify-center relative">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-500 animate-pulse" />
-              <span className="relative text-2xl font-bold text-white">DE</span>
-            </div>
+            <motion.div
+              className="absolute inset-0 rounded-full"
+              style={{ border: "2px solid #1e90ff20" }}
+              animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.7, 0.3] }}
+              transition={{ duration: 1.2, repeat: Infinity }}
+            />
+            <motion.div
+              className="absolute inset-2 rounded-full"
+              style={{ border: "1.5px solid #9333ea40" }}
+              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+            />
+            <div className="absolute inset-4 rounded-full bg-[#1e90ff] opacity-40" />
           </motion.div>
 
-          {/* Loading text */}
-          <motion.p
-            className="text-sm font-mono text-gray-500 mb-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
+          {/* Text */}
+          <motion.div
+            className="font-mono text-xs text-gray-600 tracking-widest"
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.2, repeat: Infinity }}
           >
-            Initializing Data Pipeline...
-          </motion.p>
+            INITIALIZING PIPELINE
+          </motion.div>
 
-          {/* Progress bar */}
-          <div className="w-48 h-0.5 rounded-full bg-white/5 overflow-hidden">
+          {/* Progress */}
+          <div className="mt-5 w-40 h-[2px] bg-white/5 rounded-full overflow-hidden">
             <motion.div
               className="h-full rounded-full"
-              style={{
-                background: "linear-gradient(90deg, #00d4ff, #a855f7, #ec4899)",
-              }}
+              style={{ background: "linear-gradient(90deg, #ff6b2b, #1e90ff, #9333ea)" }}
               initial={{ width: "0%" }}
               animate={{ width: "100%" }}
-              transition={{ duration: 2, ease: "easeInOut" }}
+              transition={{ duration: 1, ease: "easeInOut" }}
             />
           </div>
         </motion.div>

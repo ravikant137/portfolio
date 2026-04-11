@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, Suspense, lazy } from "react";
+import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import dynamic from "next/dynamic";
 import Navigation from "@/components/Navigation";
@@ -11,16 +11,17 @@ import DashboardSection from "@/components/DashboardSection";
 import TechStackSection from "@/components/TechStackSection";
 import ContactSection from "@/components/ContactSection";
 import StoryMode from "@/components/StoryMode";
+import AboutHero from "@/components/AboutHero";
 
 // Dynamic imports for 3D scenes (heavy)
 const HeroScene = dynamic(() => import("@/components/HeroScene"), {
   ssr: false,
-  loading: () => <div className="w-full h-full bg-[#050510]" />,
+  loading: () => <div className="w-full h-full bg-[#030308]" />,
 });
 
 const PipelineScene = dynamic(() => import("@/components/PipelineScene"), {
   ssr: false,
-  loading: () => <div className="w-full h-full bg-[#050510]" />,
+  loading: () => <div className="w-full h-full bg-[#030308]" />,
 });
 
 export default function Home() {
@@ -40,6 +41,7 @@ export default function Home() {
         {/* ========== HERO SECTION ========== */}
         <section
           ref={heroRef}
+          id="hero"
           className="relative h-screen flex items-center justify-center overflow-hidden"
         >
           {/* 3D Background */}
@@ -48,59 +50,98 @@ export default function Home() {
           </div>
 
           {/* Gradient overlays */}
-          <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-[#050510]/40 via-transparent to-[#050510]" />
+          <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-[#030308]/40 via-transparent to-[#030308]" />
+
+          {/* Focus spotlight — dark radial gradient behind text for contrast */}
+          <div
+            className="absolute inset-0 z-[11] pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse 55% 60% at 50% 48%, rgba(3,3,8,0.72) 0%, rgba(3,3,8,0.35) 50%, transparent 80%)",
+            }}
+          />
 
           {/* Text overlay */}
-          <div className="relative z-20 text-center px-6 max-w-4xl">
+          <div className="relative z-20 text-center px-6 max-w-4xl hero-pulse">
+            {/* Badge */}
             <motion.div
+              className="inline-block px-5 py-1.5 rounded-full text-xs font-mono mb-8 tracking-widest"
+              style={{
+                background: "rgba(30, 144, 255, 0.08)",
+                border: "1px solid rgba(30, 144, 255, 0.25)",
+                color: "#1e90ff",
+                textShadow: "0 0 8px rgba(30,144,255,0.3)",
+              }}
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 2.5, ease: "easeOut" }}
+            >
+              DATA ENGINEER • PIPELINE ARCHITECT • CLOUD SPECIALIST
+            </motion.div>
+
+            {/* PRIMARY — Name */}
+            <motion.h1
+              className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-2 tracking-wide hero-name-glow"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 2.5 }}
+              transition={{ duration: 1, delay: 2.8, ease: [0.16, 1, 0.3, 1] }}
             >
-              <motion.div
-                className="inline-block px-4 py-1.5 rounded-full text-xs font-mono mb-6"
-                style={{
-                  background: "rgba(0, 212, 255, 0.1)",
-                  border: "1px solid rgba(0, 212, 255, 0.2)",
-                  color: "#00d4ff",
-                }}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 2.8 }}
-              >
-                DATA ENGINEER • PIPELINE ARCHITECT • CLOUD SPECIALIST
-              </motion.div>
+              <span className="text-white">Hi, I&apos;m Ravikant Patil</span>
+            </motion.h1>
 
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-                <span className="block text-white/90">Transforming Raw Data</span>
-                <span className="block gradient-text">into Intelligent Systems</span>
-              </h1>
+            {/* SECONDARY — Role with shimmer */}
+            <motion.h2
+              className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 text-shimmer hero-role-glow"
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 3.1, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Data Engineer
+            </motion.h2>
 
-              <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
-                I design and build scalable data pipelines, warehouse architectures,
-                and analytics platforms that turn chaos into clarity.
-              </p>
+            {/* TERTIARY — Description */}
+            <motion.p
+              className="text-base md:text-lg max-w-xl mx-auto mb-12"
+              style={{
+                color: "#A1A1AA",
+                lineHeight: 1.8,
+                textShadow: "0 2px 8px rgba(0,0,0,0.6)",
+              }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 3.4, ease: "easeOut" }}
+            >
+              I design and build scalable data pipelines, warehouse architectures,
+              and analytics platforms that turn chaos into clarity.
+            </motion.p>
 
-              <motion.a
-                href="#pipeline"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-medium text-sm transition-all neon-glow"
-                style={{
-                  background: "linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(168, 85, 247, 0.15))",
-                  border: "1px solid rgba(0, 212, 255, 0.3)",
-                  color: "#00d4ff",
-                }}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 0 40px rgba(0, 212, 255, 0.3)",
-                }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Enter Data World
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-              </motion.a>
-            </motion.div>
+            {/* CTA Button */}
+            <motion.a
+              href="#pipeline"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold text-sm tracking-wide transition-all"
+              style={{
+                background: "linear-gradient(135deg, rgba(30,144,255,0.2), rgba(147,51,234,0.2))",
+                border: "1px solid rgba(30,144,255,0.35)",
+                color: "#fff",
+                boxShadow: "0 4px 24px rgba(0,0,0,0.4), 0 0 12px rgba(30,144,255,0.1)",
+                textShadow: "0 0 8px rgba(30,144,255,0.4)",
+              }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 3.7, ease: "easeOut" }}
+              whileHover={{
+                scale: 1.06,
+                boxShadow:
+                  "0 4px 32px rgba(0,0,0,0.4), 0 0 40px rgba(30,144,255,0.25), 0 0 80px rgba(147,51,234,0.1)",
+                borderColor: "rgba(30,144,255,0.6)",
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Enter Data World
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </motion.a>
           </div>
 
           {/* Scroll indicator */}
@@ -110,10 +151,13 @@ export default function Home() {
             transition={{ duration: 2, repeat: Infinity }}
           >
             <div className="w-6 h-10 rounded-full border border-white/20 flex items-start justify-center pt-2">
-              <div className="w-1 h-2 rounded-full bg-cyan-400" />
+              <div className="w-1 h-2 rounded-full bg-[#1e90ff]" />
             </div>
           </motion.div>
         </section>
+
+        {/* ========== ABOUT / CINEMATIC SCENES ========== */}
+        <AboutHero />
 
         {/* ========== PIPELINE SECTION ========== */}
         <section
@@ -121,7 +165,7 @@ export default function Home() {
           id="pipeline"
           className="relative min-h-screen py-24 px-6"
         >
-          <div className="absolute inset-0 grid-bg opacity-50" />
+
 
           <div className="relative max-w-6xl mx-auto">
             <motion.div

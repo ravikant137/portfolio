@@ -2,9 +2,10 @@
 
 import { useRef, useMemo, useState, useCallback } from "react";
 import { Canvas, useFrame, ThreeEvent } from "@react-three/fiber";
-import { Float, Environment, Html } from "@react-three/drei";
+import { Float, Environment, Html, MeshReflectorMaterial } from "@react-three/drei";
 import * as THREE from "three";
 
+/* ─── Types ─── */
 export interface PipelineNode {
   id: string;
   label: string;
@@ -14,170 +15,234 @@ export interface PipelineNode {
   description: string;
   tools: string[];
   details: string;
+  achievements: { metric: string; value: string; description: string }[];
   github?: string;
 }
 
-const PIPELINE_NODES: PipelineNode[] = [
+export const PIPELINE_NODES: PipelineNode[] = [
   {
     id: "sources",
     label: "Data Sources",
-    position: [-4.5, 1.5, 0],
-    color: "#00d4ff",
+    position: [-6, 0.5, 0],
+    color: "#ff6b2b",
     icon: "📡",
-    description: "ERP Systems, REST APIs, CSV/JSON Feeds, Streaming Data",
-    tools: ["REST APIs", "Kafka", "FTP/SFTP", "Webhooks"],
-    details: "Integrated 50+ data sources including SAP ERP, Salesforce APIs, IoT sensor feeds, and real-time streaming from Kafka topics. Built resilient connectors with automatic retry logic and dead-letter queues.",
+    description: "ERP Systems, REST APIs, CSV/JSON, Streaming Feeds",
+    tools: ["REST APIs", "Kafka", "FTP/SFTP", "Webhooks", "IoT Sensors"],
+    details:
+      "Integrated 50+ heterogeneous data sources including SAP ERP, Salesforce CRM, IoT telemetry, and real-time Kafka streams. Built resilient connectors with automatic retry, dead-letter queues, and schema evolution handling.",
+    achievements: [
+      { metric: "50+", value: "Data Sources", description: "Connected across ERP, CRM, IoT" },
+      { metric: "10M+", value: "Records/Day", description: "Ingested daily across all sources" },
+    ],
     github: "#",
   },
   {
     id: "ingestion",
     label: "Ingestion Layer",
-    position: [-2, 0, 0],
-    color: "#22d3ee",
+    position: [-3, -0.5, 0],
+    color: "#ff8c42",
     icon: "⬇️",
-    description: "Real-time & Batch Ingestion Pipelines",
-    tools: ["Apache Kafka", "Azure Event Hub", "AWS Kinesis", "Airbyte"],
-    details: "Designed dual-mode ingestion supporting both real-time streaming (sub-second latency) and scheduled batch loads. Processing 10M+ events/day with exactly-once semantics.",
+    description: "Real-time & Batch Ingestion with exactly-once semantics",
+    tools: ["Apache Kafka", "Azure Event Hub", "AWS Kinesis", "Airbyte", "Fivetran"],
+    details:
+      "Designed dual-mode ingestion: real-time streaming (sub-second latency) and scheduled batch. Processing 10M+ events daily with exactly-once semantics, backpressure handling, and auto-scaling consumers.",
+    achievements: [
+      { metric: "<1s", value: "Latency", description: "Real-time stream processing" },
+      { metric: "99.9%", value: "Uptime", description: "Pipeline reliability achieved" },
+    ],
     github: "#",
   },
   {
     id: "etl",
-    label: "ETL Processing",
-    position: [0.5, -1.2, 0],
-    color: "#a855f7",
+    label: "ETL Engine",
+    position: [0, 0.5, 0],
+    color: "#1e90ff",
     icon: "⚙️",
-    description: "Transform, Clean, Enrich, Validate",
-    tools: ["Python", "Apache Spark", "dbt", "Airflow"],
-    details: "Built modular ETL pipelines using dbt for transformation, Airflow for orchestration, and Spark for heavy computation. Reduced pipeline runtime by 70% through partitioning optimization.",
+    description: "Transform · Clean · Enrich · Validate",
+    tools: ["Python", "Apache Spark", "dbt", "Apache Airflow", "Databricks"],
+    details:
+      "Built modular transformation pipelines: dbt for SQL-based models, Spark for heavy computation, Airflow for orchestration. Reduced processing time by 40% via partition pruning and incremental materialization.",
+    achievements: [
+      { metric: "40%", value: "Faster Processing", description: "Reduced ETL runtime" },
+      { metric: "200+", value: "dbt Models", description: "Modular SQL transformations" },
+    ],
     github: "#",
   },
   {
     id: "warehouse",
     label: "Data Warehouse",
-    position: [3, 0, 0],
-    color: "#ec4899",
+    position: [3, -0.5, 0],
+    color: "#9333ea",
     icon: "🏗️",
-    description: "Snowflake / BigQuery / Redshift",
-    tools: ["Snowflake", "BigQuery", "Delta Lake", "SQL"],
-    details: "Architected a multi-layered warehouse (Bronze/Silver/Gold) on Snowflake with automated data quality checks, SCD Type 2 tracking, and cost-optimized compute clusters.",
+    description: "Snowflake · Delta Lake · Medallion Architecture",
+    tools: ["Snowflake", "Databricks", "Delta Lake", "BigQuery", "SQL"],
+    details:
+      "Architected a multi-layer warehouse (Bronze → Silver → Gold) on Snowflake with SCD Type 2 tracking, automated data quality gates, and cost-optimized compute clusters. Achieved 30% cloud cost reduction.",
+    achievements: [
+      { metric: "30%", value: "Cost Saved", description: "Cloud infrastructure optimization" },
+      { metric: "50%", value: "Faster Queries", description: "Reduced query latency" },
+    ],
     github: "#",
   },
   {
     id: "analytics",
     label: "Analytics & BI",
-    position: [5, 1.5, 0],
-    color: "#f97316",
+    position: [6, 0.5, 0],
+    color: "#00e5a0",
     icon: "📊",
-    description: "Dashboards, Reports, ML Features",
-    tools: ["Power BI", "Tableau", "Looker", "Python"],
-    details: "Delivered 20+ executive dashboards with real-time KPIs, predictive analytics models, and self-service analytics portals. Enabled data-driven decision making across 5 business units.",
+    description: "Dashboards, KPIs, ML Features, Self-Service",
+    tools: ["Power BI", "Tableau", "Looker", "Python ML", "Streamlit"],
+    details:
+      "Delivered 20+ executive dashboards with real-time KPIs, predictive models, and self-service portals. Enabled data-driven decisions across 5 business units, driving measurable ROI.",
+    achievements: [
+      { metric: "20+", value: "Dashboards", description: "Executive & operational" },
+      { metric: "5x", value: "Faster Decisions", description: "Business decision acceleration" },
+    ],
     github: "#",
   },
 ];
 
 const CONNECTIONS: [number, number][] = [
-  [0, 1], [1, 2], [2, 3], [3, 4],
+  [0, 1],
+  [1, 2],
+  [2, 3],
+  [3, 4],
 ];
 
+/* ─── Grid Floor ─── */
+function PipelineFloor() {
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -3, 0]} receiveShadow>
+      <planeGeometry args={[50, 30, 50, 30]} />
+      <MeshReflectorMaterial
+        mirror={0.12}
+        blur={[200, 80]}
+        resolution={512}
+        mixBlur={1}
+        mixStrength={0.5}
+        roughness={1}
+        depthScale={1}
+        color="#040410"
+        metalness={0.4}
+      />
+    </mesh>
+  );
+}
+
+/* ─── Pipeline Node 3D Mesh ─── */
 function PipelineNodeMesh({
   node,
   isSelected,
   onClick,
-  onHover,
 }: {
   node: PipelineNode;
   isSelected: boolean;
   onClick: () => void;
-  onHover: (hovered: boolean) => void;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const glowRef = useRef<THREE.Mesh>(null);
+  const pulseRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
   useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
     if (meshRef.current) {
-      const targetScale = isSelected ? 1.3 : hovered ? 1.15 : 1;
-      meshRef.current.scale.lerp(
-        new THREE.Vector3(targetScale, targetScale, targetScale),
-        0.1
-      );
-      meshRef.current.rotation.y = clock.getElapsedTime() * 0.5;
+      const ts = isSelected ? 1.35 : hovered ? 1.15 : 1;
+      meshRef.current.scale.lerp(new THREE.Vector3(ts, ts, ts), 0.08);
+      meshRef.current.rotation.y = t * 0.4;
+      meshRef.current.rotation.x = Math.sin(t * 0.3) * 0.08;
     }
     if (glowRef.current) {
-      const s = (isSelected ? 1.8 : hovered ? 1.5 : 1.2) + Math.sin(clock.getElapsedTime() * 2) * 0.1;
-      glowRef.current.scale.setScalar(s);
-      (glowRef.current.material as THREE.MeshStandardMaterial).opacity = isSelected ? 0.15 : hovered ? 0.1 : 0.05;
+      const gs = (isSelected ? 2.2 : hovered ? 1.8 : 1.4) + Math.sin(t * 2.5) * 0.12;
+      glowRef.current.scale.setScalar(gs);
+      (glowRef.current.material as THREE.MeshStandardMaterial).opacity =
+        isSelected ? 0.12 : hovered ? 0.08 : 0.03;
+    }
+    if (pulseRef.current) {
+      const ps = 1 + ((t * 0.8) % 2);
+      pulseRef.current.scale.setScalar(ps);
+      (pulseRef.current.material as THREE.MeshStandardMaterial).opacity = Math.max(0, 0.15 - ps * 0.06);
     }
   });
 
   const handlePointerOver = useCallback((e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     setHovered(true);
-    onHover(true);
     document.body.style.cursor = "pointer";
-  }, [onHover]);
-
+  }, []);
   const handlePointerOut = useCallback(() => {
     setHovered(false);
-    onHover(false);
     document.body.style.cursor = "default";
-  }, [onHover]);
+  }, []);
+  const handleClick = useCallback(
+    (e: ThreeEvent<MouseEvent>) => {
+      e.stopPropagation();
+      onClick();
+    },
+    [onClick]
+  );
 
-  const handleClick = useCallback((e: ThreeEvent<MouseEvent>) => {
-    e.stopPropagation();
-    onClick();
-  }, [onClick]);
+  const getGeometry = () => {
+    switch (node.id) {
+      case "sources":
+        return <boxGeometry args={[0.5, 0.5, 0.5]} />;
+      case "ingestion":
+        return <coneGeometry args={[0.35, 0.6, 6]} />;
+      case "etl":
+        return <torusKnotGeometry args={[0.25, 0.08, 128, 16]} />;
+      case "warehouse":
+        return <boxGeometry args={[0.55, 0.55, 0.55]} />;
+      case "analytics":
+        return <dodecahedronGeometry args={[0.4, 0]} />;
+      default:
+        return <sphereGeometry args={[0.4, 32, 32]} />;
+    }
+  };
 
   return (
-    <Float speed={2} rotationIntensity={0.1} floatIntensity={0.3}>
+    <Float speed={1.8} rotationIntensity={0.08} floatIntensity={0.25}>
       <group position={node.position}>
-        {/* Glow sphere */}
-        <mesh ref={glowRef}>
-          <sphereGeometry args={[0.6, 32, 32]} />
-          <meshStandardMaterial
-            color={node.color}
-            emissive={node.color}
-            emissiveIntensity={0.5}
-            transparent
-            opacity={0.05}
-          />
+        {/* Energy pulse ring */}
+        <mesh ref={pulseRef} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.8, 0.02, 16, 64]} />
+          <meshStandardMaterial color={node.color} emissive={node.color} emissiveIntensity={2} transparent opacity={0.1} />
         </mesh>
 
-        {/* Main node */}
+        {/* Outer glow sphere */}
+        <mesh ref={glowRef}>
+          <sphereGeometry args={[0.7, 24, 24]} />
+          <meshStandardMaterial color={node.color} emissive={node.color} emissiveIntensity={0.6} transparent opacity={0.03} />
+        </mesh>
+
+        {/* Main shape */}
         <mesh
           ref={meshRef}
           onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
           onClick={handleClick}
+          castShadow
         >
-          <dodecahedronGeometry args={[0.4, 0]} />
+          {getGeometry()}
           <meshStandardMaterial
             color={node.color}
             emissive={node.color}
-            emissiveIntensity={hovered || isSelected ? 1 : 0.4}
-            metalness={0.8}
-            roughness={0.2}
-            wireframe={!isSelected}
+            emissiveIntensity={hovered || isSelected ? 1.5 : 0.5}
+            metalness={0.85}
+            roughness={0.15}
+            wireframe={!isSelected && !hovered}
           />
         </mesh>
 
         {/* Label */}
-        <Html
-          position={[0, -0.7, 0]}
-          center
-          style={{
-            pointerEvents: "none",
-            whiteSpace: "nowrap",
-          }}
-        >
+        <Html position={[0, -0.85, 0]} center style={{ pointerEvents: "none", whiteSpace: "nowrap" }}>
           <div
-            className="text-xs font-mono px-2 py-1 rounded-md text-center"
+            className="text-[10px] font-mono px-2.5 py-1 rounded-lg text-center transition-all duration-300"
             style={{
               color: node.color,
-              background: "rgba(5,5,16,0.8)",
-              border: `1px solid ${node.color}33`,
-              textShadow: `0 0 10px ${node.color}66`,
-              fontSize: "10px",
+              background: "rgba(3,3,8,0.85)",
+              border: `1px solid ${node.color}${hovered || isSelected ? "66" : "22"}`,
+              textShadow: `0 0 8px ${node.color}88`,
+              transform: hovered || isSelected ? "scale(1.1)" : "scale(1)",
             }}
           >
             {node.icon} {node.label}
@@ -188,31 +253,24 @@ function PipelineNodeMesh({
   );
 }
 
-function ConnectionLine({ start, end, color }: {
-  start: [number, number, number];
-  end: [number, number, number];
-  color: string;
-}) {
+/* ─── Connection Particles (data packets) ─── */
+function ConnectionParticles({ start, end, color }: { start: [number, number, number]; end: [number, number, number]; color: string }) {
   const ref = useRef<THREE.Group>(null);
-  const particleCount = 8;
-
-  const particles = useMemo(() => {
-    return Array.from({ length: particleCount }, (_, i) => ({
-      offset: i / particleCount,
-      size: Math.random() * 0.03 + 0.015,
-    }));
-  }, []);
+  const count = 10;
+  const particles = useMemo(
+    () => Array.from({ length: count }, (_, i) => ({ offset: i / count, size: Math.random() * 0.035 + 0.02 })),
+    []
+  );
 
   useFrame(({ clock }) => {
     if (!ref.current) return;
-    const t = clock.getElapsedTime() * 0.4;
+    const t = clock.getElapsedTime() * 0.35;
     ref.current.children.forEach((child, i) => {
       const p = (particles[i].offset + t) % 1;
       child.position.x = start[0] + (end[0] - start[0]) * p;
-      child.position.y = start[1] + (end[1] - start[1]) * p;
+      child.position.y = start[1] + (end[1] - start[1]) * p + Math.sin(p * Math.PI) * 0.3;
       child.position.z = start[2] + (end[2] - start[2]) * p;
-      const scale = Math.sin(p * Math.PI);
-      child.scale.setScalar(Math.max(0.1, scale));
+      child.scale.setScalar(Math.max(0.1, Math.sin(p * Math.PI) * 1.2));
     });
   });
 
@@ -221,19 +279,30 @@ function ConnectionLine({ start, end, color }: {
       {particles.map((p, i) => (
         <mesh key={i}>
           <sphereGeometry args={[p.size, 6, 6]} />
-          <meshStandardMaterial
-            color={color}
-            emissive={color}
-            emissiveIntensity={2}
-            transparent
-            opacity={0.7}
-          />
+          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={3} transparent opacity={0.8} />
         </mesh>
       ))}
     </group>
   );
 }
 
+/* ─── Connection Bezier Line ─── */
+function ConnectionLine({ start, end, color }: { start: [number, number, number]; end: [number, number, number]; color: string }) {
+  const lineObj = useMemo(() => {
+    const curve = new THREE.QuadraticBezierCurve3(
+      new THREE.Vector3(...start),
+      new THREE.Vector3((start[0] + end[0]) / 2, Math.max(start[1], end[1]) + 0.5, 0),
+      new THREE.Vector3(...end)
+    );
+    const geo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(40));
+    const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.12 });
+    return new THREE.Line(geo, mat);
+  }, [start, end, color]);
+
+  return <primitive object={lineObj} />;
+}
+
+/* ─── Scene Content ─── */
 function PipelineSceneContent({
   selectedNode,
   onSelectNode,
@@ -243,36 +312,43 @@ function PipelineSceneContent({
 }) {
   return (
     <>
-      <ambientLight intensity={0.1} />
-      <pointLight position={[0, 5, 5]} color="#00d4ff" intensity={1.5} />
-      <pointLight position={[-5, -3, 3]} color="#a855f7" intensity={0.8} />
-      <pointLight position={[5, -3, 3]} color="#ec4899" intensity={0.8} />
+      <ambientLight intensity={0.06} />
+      <pointLight position={[-6, 3, 4]} color="#ff6b2b" intensity={1.5} distance={20} />
+      <pointLight position={[0, 4, 4]} color="#1e90ff" intensity={2} distance={20} />
+      <pointLight position={[3, 3, 4]} color="#9333ea" intensity={1.5} distance={20} />
+      <pointLight position={[6, 3, 4]} color="#00e5a0" intensity={1.5} distance={20} />
+      <fog attach="fog" args={["#030308", 10, 30]} />
 
-      {PIPELINE_NODES.map(node => (
+      <PipelineFloor />
+
+      {PIPELINE_NODES.map((node) => (
         <PipelineNodeMesh
           key={node.id}
           node={node}
           isSelected={selectedNode === node.id}
           onClick={() => onSelectNode(selectedNode === node.id ? null : node.id)}
-          onHover={() => {}}
         />
       ))}
 
       {CONNECTIONS.map(([fromIdx, toIdx], i) => (
-        <ConnectionLine
-          key={i}
-          start={PIPELINE_NODES[fromIdx].position}
-          end={PIPELINE_NODES[toIdx].position}
-          color={PIPELINE_NODES[fromIdx].color}
-        />
+        <group key={i}>
+          <ConnectionLine
+            start={PIPELINE_NODES[fromIdx].position}
+            end={PIPELINE_NODES[toIdx].position}
+            color={PIPELINE_NODES[fromIdx].color}
+          />
+          <ConnectionParticles
+            start={PIPELINE_NODES[fromIdx].position}
+            end={PIPELINE_NODES[toIdx].position}
+            color={PIPELINE_NODES[fromIdx].color}
+          />
+        </group>
       ))}
 
       <Environment preset="night" />
     </>
   );
 }
-
-export { PIPELINE_NODES };
 
 export default function PipelineScene({
   selectedNode,
@@ -284,16 +360,14 @@ export default function PipelineScene({
   return (
     <div className="w-full h-full canvas-container">
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 55 }}
+        camera={{ position: [0, 2, 10], fov: 50 }}
         dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true }}
+        shadows
+        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         style={{ background: "transparent" }}
         onPointerMissed={() => onSelectNode(null)}
       >
-        <PipelineSceneContent
-          selectedNode={selectedNode}
-          onSelectNode={onSelectNode}
-        />
+        <PipelineSceneContent selectedNode={selectedNode} onSelectNode={onSelectNode} />
       </Canvas>
     </div>
   );

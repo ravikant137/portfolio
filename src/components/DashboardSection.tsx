@@ -3,33 +3,37 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
-interface KPI {
+/* ─── Types ─── */
+interface MetricHighlight {
   label: string;
   value: number;
   suffix: string;
   color: string;
+  icon: string;
+  description: string;
 }
 
-const KPIS: KPI[] = [
-  { label: "Pipeline Uptime", value: 99.9, suffix: "%", color: "#00d4ff" },
-  { label: "Records/Day", value: 10, suffix: "M+", color: "#a855f7" },
-  { label: "Cost Reduction", value: 40, suffix: "%", color: "#ec4899" },
-  { label: "Query Speed", value: 3, suffix: "x faster", color: "#22d3ee" },
+const METRICS: MetricHighlight[] = [
+  { label: "Processing Time", value: 40, suffix: "% Reduced", color: "#ff6b2b", icon: "⚡", description: "Reduced data processing time by optimizing ETL pipelines" },
+  { label: "Cloud Cost", value: 30, suffix: "% Saved", color: "#9333ea", icon: "💰", description: "Achieved cloud infrastructure cost optimization" },
+  { label: "Records Daily", value: 10, suffix: "M+", color: "#1e90ff", icon: "📊", description: "Scalable pipelines handling millions of records" },
+  { label: "Pipeline Uptime", value: 99.9, suffix: "%", color: "#00e5a0", icon: "🛡️", description: "Improved data accuracy and reliability" },
+  { label: "Query Latency", value: 50, suffix: "% Reduced", color: "#ff8c42", icon: "🏎️", description: "Faster query performance across the warehouse" },
+  { label: "Decision Speed", value: 5, suffix: "x Faster", color: "#22d3ee", icon: "🎯", description: "Enabled faster business decision-making" },
 ];
 
-function AnimatedCounter({ value, suffix, color }: { value: number; suffix: string; color: string }) {
+/* ─── Animated Counter ─── */
+function GlowingCounter({ value, suffix, color, inView }: { value: number; suffix: string; color: string; inView: boolean }) {
   const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true });
 
   useEffect(() => {
-    if (!isInView) return;
-    const duration = 2000;
-    const steps = 60;
-    const increment = value / steps;
+    if (!inView) return;
+    const duration = 2200;
+    const steps = 50;
+    const inc = value / steps;
     let current = 0;
     const timer = setInterval(() => {
-      current += increment;
+      current += inc;
       if (current >= value) {
         setCount(value);
         clearInterval(timer);
@@ -38,254 +42,257 @@ function AnimatedCounter({ value, suffix, color }: { value: number; suffix: stri
       }
     }, duration / steps);
     return () => clearInterval(timer);
-  }, [value, isInView]);
+  }, [value, inView]);
 
   return (
-    <span ref={ref} style={{ color }} className="text-3xl font-bold font-mono">
-      {count}{suffix}
+    <span
+      className="text-3xl md:text-4xl font-bold font-mono tabular-nums"
+      style={{
+        color,
+        textShadow: `0 0 20px ${color}60, 0 0 50px ${color}25`,
+      }}
+    >
+      {count}
+      <span className="text-lg md:text-xl opacity-80">{suffix}</span>
     </span>
   );
 }
 
+/* ─── Bar Chart ─── */
 function BarChart({ inView }: { inView: boolean }) {
   const bars = [
-    { label: "Q1", height: 65, color: "#00d4ff" },
-    { label: "Q2", height: 80, color: "#22d3ee" },
-    { label: "Q3", height: 55, color: "#a855f7" },
-    { label: "Q4", height: 90, color: "#ec4899" },
+    { label: "Q1", height: 65, color: "#ff6b2b" },
+    { label: "Q2", height: 82, color: "#1e90ff" },
+    { label: "Q3", height: 58, color: "#9333ea" },
+    { label: "Q4", height: 93, color: "#00e5a0" },
   ];
 
   return (
-    <div className="flex items-end gap-3 h-40">
+    <div className="flex items-end gap-3 h-36">
       {bars.map((bar, i) => (
         <div key={bar.label} className="flex flex-col items-center gap-2 flex-1">
           <motion.div
             className="w-full rounded-t-lg relative overflow-hidden"
             style={{
-              background: `linear-gradient(180deg, ${bar.color}, ${bar.color}40)`,
-              boxShadow: `0 0 15px ${bar.color}30`,
+              background: `linear-gradient(180deg, ${bar.color}, ${bar.color}30)`,
+              boxShadow: `0 0 20px ${bar.color}25`,
             }}
             initial={{ height: 0 }}
             animate={inView ? { height: `${bar.height}%` } : { height: 0 }}
-            transition={{ duration: 1, delay: i * 0.15, ease: "easeOut" }}
+            transition={{ duration: 1.2, delay: i * 0.12, ease: "easeOut" }}
           >
-            {/* Shimmer effect */}
             <motion.div
-              className="absolute inset-0 opacity-30"
-              style={{
-                background: `linear-gradient(180deg, transparent, white, transparent)`,
-              }}
+              className="absolute inset-0 opacity-20"
+              style={{ background: "linear-gradient(180deg, transparent, white, transparent)" }}
               animate={{ y: ["-100%", "200%"] }}
-              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+              transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.3 }}
             />
           </motion.div>
-          <span className="text-[10px] font-mono text-gray-500">{bar.label}</span>
+          <span className="text-[9px] font-mono text-gray-600">{bar.label}</span>
         </div>
       ))}
     </div>
   );
 }
 
+/* ─── Line Chart ─── */
 function LineChart({ inView }: { inView: boolean }) {
-  const points = [
-    [0, 70], [15, 55], [30, 65], [45, 40], [60, 50], [75, 30], [90, 20], [100, 15],
-  ];
-
-  const pathData = points.map((p, i) =>
-    `${i === 0 ? "M" : "L"} ${p[0]} ${100 - p[1]}`
-  ).join(" ");
+  const pts = [[0, 70], [15, 55], [30, 68], [45, 38], [60, 48], [75, 28], [90, 18], [100, 12]];
+  const path = pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p[0]} ${100 - p[1]}`).join(" ");
 
   return (
-    <svg viewBox="0 0 100 100" className="w-full h-32" preserveAspectRatio="none">
-      {/* Grid lines */}
-      {[25, 50, 75].map(y => (
-        <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="#ffffff08" strokeWidth="0.5" />
+    <svg viewBox="0 0 100 100" className="w-full h-28" preserveAspectRatio="none">
+      {[25, 50, 75].map((y) => (
+        <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="#ffffff06" strokeWidth="0.5" />
       ))}
-
-      {/* Area fill */}
       <motion.path
-        d={`${pathData} L 100 100 L 0 100 Z`}
-        fill="url(#lineGradient)"
+        d={`${path} L 100 100 L 0 100 Z`}
+        fill="url(#areaFill)"
         initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 0.3 } : { opacity: 0 }}
+        animate={inView ? { opacity: 0.35 } : { opacity: 0 }}
         transition={{ duration: 1.5 }}
       />
-
-      {/* Line */}
       <motion.path
-        d={pathData}
+        d={path}
         fill="none"
-        stroke="#a855f7"
+        stroke="#1e90ff"
         strokeWidth="2"
         strokeLinecap="round"
         initial={{ pathLength: 0 }}
         animate={inView ? { pathLength: 1 } : { pathLength: 0 }}
-        transition={{ duration: 2, ease: "easeInOut" }}
+        transition={{ duration: 2.5, ease: "easeInOut" }}
       />
-
-      {/* Data points */}
-      {points.map((p, i) => (
+      {pts.map((p, i) => (
         <motion.circle
           key={i}
           cx={p[0]}
           cy={100 - p[1]}
           r="1.5"
-          fill="#a855f7"
+          fill="#1e90ff"
           initial={{ opacity: 0, scale: 0 }}
           animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
-          transition={{ duration: 0.3, delay: 0.5 + i * 0.15 }}
+          transition={{ duration: 0.3, delay: 0.6 + i * 0.12 }}
         />
       ))}
-
       <defs>
-        <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#a855f7" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
+        <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1e90ff" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#1e90ff" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>
   );
 }
 
+/* ─── Live Data Feed ─── */
 function LiveDataFeed() {
-  const [rows, setRows] = useState<Array<{ id: number; source: string; status: string; time: string }>>([]);
+  const [rows, setRows] = useState<{ id: number; source: string; status: string; time: string }[]>([]);
 
   useEffect(() => {
-    const sources = ["SAP ERP", "Salesforce", "IoT Hub", "Kafka", "REST API", "S3 Bucket"];
+    const sources = ["SAP ERP", "Salesforce", "Kafka", "IoT Hub", "REST API", "S3"];
     const statuses = ["✓ Processed", "⟳ Loading", "✓ Stored", "✓ Validated"];
-
-    const addRow = () => {
-      setRows(prev => {
-        const newRow = {
+    const add = () =>
+      setRows((prev) => [
+        {
           id: Date.now(),
           source: sources[Math.floor(Math.random() * sources.length)],
           status: statuses[Math.floor(Math.random() * statuses.length)],
           time: new Date().toLocaleTimeString(),
-        };
-        return [newRow, ...prev].slice(0, 5);
-      });
-    };
-
-    addRow();
-    const interval = setInterval(addRow, 2000);
-    return () => clearInterval(interval);
+        },
+        ...prev,
+      ].slice(0, 5));
+    add();
+    const iv = setInterval(add, 2200);
+    return () => clearInterval(iv);
   }, []);
 
   return (
     <div className="space-y-1">
-      {rows.map((row, i) => (
+      {rows.map((r, i) => (
         <motion.div
-          key={row.id}
-          className="flex items-center justify-between text-[10px] font-mono px-2 py-1 rounded"
-          style={{ background: "rgba(0, 212, 255, 0.05)" }}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1 - i * 0.15, x: 0 }}
-          transition={{ duration: 0.3 }}
+          key={r.id}
+          className="flex items-center justify-between text-[9px] font-mono px-2 py-1 rounded"
+          style={{ background: "rgba(30,144,255,0.04)" }}
+          initial={{ opacity: 0, x: -15 }}
+          animate={{ opacity: 1 - i * 0.12, x: 0 }}
+          transition={{ duration: 0.25 }}
         >
-          <span className="text-gray-500">{row.time}</span>
-          <span className="text-cyan-400">{row.source}</span>
-          <span className="text-green-400">{row.status}</span>
+          <span className="text-gray-600">{r.time}</span>
+          <span className="text-blue-400">{r.source}</span>
+          <span className="text-green-400">{r.status}</span>
         </motion.div>
       ))}
     </div>
   );
 }
 
+/* ─── Main Dashboard Section ─── */
 export default function DashboardSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <section
-      ref={sectionRef}
-      id="dashboard"
-      className="relative min-h-screen py-24 px-6"
-    >
-      {/* Background grid */}
-      <div className="absolute inset-0 grid-bg opacity-50" />
+    <section ref={ref} id="dashboard" className="relative min-h-screen py-28 px-6">
+      <div className="absolute inset-0 grid-bg opacity-40" />
 
       <div className="relative max-w-6xl mx-auto">
-        {/* Section header */}
+        {/* Header */}
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">
-            Live Analytics Dashboard
+          <h2 className="text-4xl md:text-6xl font-bold mb-4 gradient-text">
+            Measurable Impact
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Real-time data pipeline monitoring — simulated metrics showcasing
-            the kind of systems I build and maintain.
+          <p className="text-gray-500 max-w-2xl mx-auto text-sm md:text-base">
+            Real metrics from production data systems — animated counters showcasing
+            the kind of measurable results I deliver.
           </p>
         </motion.div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {KPIS.map((kpi, i) => (
+        {/* ── Metric Highlight Cards (CORE) ── */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+          {METRICS.map((m, i) => (
             <motion.div
-              key={kpi.label}
-              className="glass p-5 text-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+              key={m.label}
+              className="metric-card glass p-5 relative overflow-hidden"
+              style={{ "--accent": m.color, "--accent-dim": `${m.color}10` } as React.CSSProperties}
+              initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
+              animate={inView ? { opacity: 1, y: 0, filter: "blur(0)" } : {}}
+              transition={{ duration: 0.7, delay: i * 0.12 }}
+              whileHover={{ scale: 1.04, transition: { duration: 0.2 } }}
             >
-              <AnimatedCounter value={kpi.value} suffix={kpi.suffix} color={kpi.color} />
-              <p className="text-xs text-gray-400 mt-2 font-mono">{kpi.label}</p>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-lg">{m.icon}</span>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-gray-500">{m.label}</span>
+              </div>
+              <GlowingCounter value={m.value} suffix={m.suffix} color={m.color} inView={inView} />
+              <p className="text-[10px] text-gray-600 mt-2 leading-relaxed">{m.description}</p>
+
+              {/* Subtle animated glow */}
+              <motion.div
+                className="absolute -top-4 -right-4 w-24 h-24 rounded-full pointer-events-none"
+                style={{ background: `radial-gradient(circle, ${m.color}15, transparent 70%)` }}
+                animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 3, repeat: Infinity, delay: i * 0.2 }}
+              />
             </motion.div>
           ))}
         </div>
 
-        {/* Charts Row */}
+        {/* ── Charts Row ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-          {/* Bar Chart */}
           <motion.div
-            className="glass p-6 cursor-pointer"
+            className="glass p-6 cursor-pointer group"
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.7 }}
             whileHover={{ scale: 1.02 }}
             onClick={() => setShowDetails(!showDetails)}
           >
-            <h4 className="text-xs font-mono uppercase tracking-widest text-gray-500 mb-4">
+            <h4 className="text-[10px] font-mono uppercase tracking-[0.15em] text-gray-600 mb-4">
               Pipeline Throughput
             </h4>
-            <BarChart inView={isInView} />
+            <BarChart inView={inView} />
+            <p className="text-[9px] text-gray-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              Click for breakdown →
+            </p>
           </motion.div>
 
-          {/* Line Chart */}
           <motion.div
-            className="glass p-6 cursor-pointer"
+            className="glass p-6 cursor-pointer group"
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.5 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.8 }}
             whileHover={{ scale: 1.02 }}
             onClick={() => setShowDetails(!showDetails)}
           >
-            <h4 className="text-xs font-mono uppercase tracking-widest text-gray-500 mb-4">
+            <h4 className="text-[10px] font-mono uppercase tracking-[0.15em] text-gray-600 mb-4">
               Error Rate Reduction
             </h4>
-            <LineChart inView={isInView} />
+            <LineChart inView={inView} />
+            <p className="text-[9px] text-gray-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              Click for details →
+            </p>
           </motion.div>
 
-          {/* Live Feed */}
           <motion.div
             className="glass p-6"
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.9 }}
           >
-            <h4 className="text-xs font-mono uppercase tracking-widest text-gray-500 mb-4">
+            <h4 className="text-[10px] font-mono uppercase tracking-[0.15em] text-gray-600 mb-4">
               Live Data Feed
             </h4>
             <LiveDataFeed />
           </motion.div>
         </div>
 
-        {/* Detail panel on click */}
+        {/* ── Expandable Detail ── */}
         <motion.div
           initial={false}
           animate={showDetails ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
@@ -293,24 +300,21 @@ export default function DashboardSection() {
         >
           <div className="glass p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <h4 className="text-sm font-bold text-cyan-400 mb-2">Business Problem</h4>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Legacy batch processing caused 8-hour delays in business reporting.
-                Decision-makers needed real-time visibility into operations.
+              <h4 className="text-sm font-bold text-[#ff6b2b] mb-2">Business Problem</h4>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Legacy batch processing caused 8-hour delays in reporting. Decision-makers needed real-time visibility into operations.
               </p>
             </div>
             <div>
-              <h4 className="text-sm font-bold text-purple-400 mb-2">Data Modeling Approach</h4>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Implemented a medallion architecture (Bronze → Silver → Gold) with
-                streaming micro-batches and incremental materialization using dbt.
+              <h4 className="text-sm font-bold text-[#9333ea] mb-2">Data Modeling Approach</h4>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Implemented medallion architecture (Bronze → Silver → Gold) with streaming micro-batches and incremental materialization via dbt.
               </p>
             </div>
             <div>
-              <h4 className="text-sm font-bold text-pink-400 mb-2">Outcome</h4>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Reduced reporting latency from 8 hours to 5 minutes. Saved $200K/year
-                in compute costs. Enabled self-service analytics for 50+ users.
+              <h4 className="text-sm font-bold text-[#00e5a0] mb-2">Outcome</h4>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Reduced reporting latency from 8h to 5min. Saved $200K/year. Self-service analytics for 50+ users.
               </p>
             </div>
           </div>
