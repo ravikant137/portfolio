@@ -11,6 +11,7 @@ import DashboardSection from "@/components/DashboardSection";
 import TechStackSection from "@/components/TechStackSection";
 import ContactSection from "@/components/ContactSection";
 import CertificationsSection from "@/components/CertificationsSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
 import StoryMode from "@/components/StoryMode";
 import AboutHero from "@/components/AboutHero";
 
@@ -448,6 +449,9 @@ export default function Home() {
 
         {/* ========== CERTIFICATIONS ========== */}
         <CertificationsSection />
+
+        {/* ========== TESTIMONIALS ========== */}
+        <TestimonialsSection />
 
         {/* ========== CONTACT ========== */}
         <ContactSection />

@@ -298,7 +298,8 @@ export default function DashboardSection() {
           animate={showDetails ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
           className="overflow-hidden"
         >
-          <div className="glass p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Case Study 1 */}
+          <div className="glass p-8 grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div>
               <h4 className="text-sm font-bold text-[#ff6b2b] mb-2">Business Problem</h4>
               <p className="text-xs text-gray-500 leading-relaxed">
@@ -315,6 +316,27 @@ export default function DashboardSection() {
               <h4 className="text-sm font-bold text-[#00e5a0] mb-2">Outcome</h4>
               <p className="text-xs text-gray-500 leading-relaxed">
                 Reduced reporting latency from 8h to 5min. Saved $200K/year. Self-service analytics for 50+ users.
+              </p>
+            </div>
+          </div>
+          {/* Case Study 2 */}
+          <div className="glass p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <h4 className="text-sm font-bold text-[#1e90ff] mb-2">Business Problem</h4>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Manual ETL processes led to inconsistent data and missed SLAs for a global sales dashboard.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-[#ff6b2b] mb-2">Solution</h4>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Automated end-to-end data pipelines using Informatica IICS and Azure Data Factory, with robust error handling and alerting.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-[#9333ea] mb-2">Impact</h4>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Increased data reliability to 99.99%, reduced manual effort by 90%, and enabled daily executive reporting with zero failures for 18 months.
               </p>
             </div>
           </div>
