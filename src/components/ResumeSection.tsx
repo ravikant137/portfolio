@@ -195,27 +195,6 @@ export default function ResumeSection() {
             </div>
           </div>
         </motion.div>
-
-        {/* Secondary download link */}
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 1.3 }}
-        >
-          <p className="text-[11px] font-mono mb-4" style={{ color: "rgba(255,255,255,0.18)" }}>
-            PDF opens instantly — no sign-in required
-          </p>
-          <a
-            href="/Ravikant_Patil_Resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[11px] font-mono transition-colors hover:text-[#1e90ff]"
-            style={{ color: "rgba(255,255,255,0.2)", textDecoration: "underline", textUnderlineOffset: 3 }}
-          >
-            or view in browser →
-          </a>
-        </motion.div>
       </div>
     </section>
   );
