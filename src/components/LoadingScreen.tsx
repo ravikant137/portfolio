@@ -17,21 +17,21 @@ export default function LoadingScreen() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(false), 2600);
+    const timer = setTimeout(() => setVisible(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     if (lineIndex < BOOT_LINES.length - 1) {
-      const t = setTimeout(() => setLineIndex((i) => i + 1), 420);
+      const t = setTimeout(() => setLineIndex((i) => i + 1), 150);
       return () => clearTimeout(t);
     }
   }, [lineIndex]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setProgress((p) => Math.min(p + Math.random() * 12, 100));
-    }, 120);
+      setProgress((p) => Math.min(p + Math.random() * 25, 100));
+    }, 50);
     return () => clearInterval(interval);
   }, []);
 
